@@ -2,6 +2,8 @@ import numpy as np
 from scipy.stats import expon
 from scipy import stats
 import random
+
+iterations  = 10
 inter_ass = 20
 arrse = int(540/inter_ass)
 sys_time = 20
@@ -12,12 +14,18 @@ n_idle = 0
 e_idle = 0
 l_idle = 0
 c2_idle = 0
+
+#arrivals follow Poisson
 arrivals = list(np.random.poisson(inter_ass, arrse))
+
+#initialise base case
 temp = arrivals[0]
 mean_response_base = 0 
 mean_response_nurse=0
 mean_response_clerk = 0
 table = []
+
+
 f = open("outsms.txt", "w")
 f.write("For 10 iterations:\n")
 arrivals2 = []
@@ -26,6 +34,7 @@ for ele in arrivals:
 	temp+=ele
 arrivals = arrivals2
 print(arrivals)
+
 
 times = np.random.normal(sys_time, 5, arrse)
 times = list(times.astype(np.int))
@@ -67,6 +76,7 @@ else:
 	close_base = str(int((ends[-1]-540)/60)+9) + ":" + str((ends[-1]-540)%60) +  "pm"
 
 
+	
 #clerk
 clerks = np.array(expon.rvs(scale = 1.5,  size = n, loc=2))
 clerks = list(clerks.astype(np.int))
@@ -125,15 +135,12 @@ for i in range(1,n):
 	n_idle+=min(0,n_ends[i-1]-arrivals[i])
 	n_starts.append(n_waits[i] + arrivals[i])
 	n_ends.append(n_starts[i] + n_times[i])
-
 #print(n_waits,n_starts,n_ends)
 for i in range(n):
 	n_responses.append(n_waits[i]+n_ends[i]-n_starts[i])
-
 #print(n_responses)
 mean_response_nurse = sum(n_responses)/n
 #print(mean_response_nurse)
-
 #print(((np.var(n_responses)/n)+(np.var(responses)/n))**0.5)
 vvv = int((((np.var(n_responses)/n)+(np.var(responses)/n))**2)/(((np.var(n_responses)/n)**2)/(n-1))+(((np.var(responses)/n)**2)/(n-1)))
 #print(vvv)
@@ -152,6 +159,7 @@ else:
 
 
 
+	
 #exam room
 chan = bool(random.getrandbits(1))
 exams = np.random.normal(sys_time, 7, arrse)
@@ -171,15 +179,12 @@ for i in range(1,n):
 	e_idle+=min(0,e_ends[i-1]-arrivals[i])
 	e_starts.append(e_waits[i] + arrivals[i])
 	e_ends.append(e_starts[i] + e_times[i])
-
 #print(e_waits,e_starts,e_ends)
 for i in range(n):
 	e_responses.append(e_waits[i]+e_ends[i]-e_starts[i])
-
 #print(e_responses)
 mean_response_exam = sum(e_responses)/n
 #print(mean_response_exam)
-
 #print(((np.var(e_responses)/n)+(np.var(responses)/n))**0.5)
 vve = int((((np.var(e_responses)/n)+(np.var(responses)/n))**2)/(((np.var(e_responses)/n)**2)/(n-1))+(((np.var(responses)/n)**2)/(n-1)))
 #print(vve)
@@ -198,6 +203,8 @@ else:
 
 
 
+	
+	
 #lab
 labs = np.array(expon.rvs(scale = 1.5,  size = n, loc=10))
 labs = list(labs.astype(np.int))
@@ -216,15 +223,12 @@ for i in range(1,n):
 	l_idle+=min(0,l_ends[i-1]-arrivals[i])
 	l_starts.append(l_waits[i] + arrivals[i])
 	l_ends.append(l_starts[i] + l_times[i])
-
 #print(l_waits,l_starts,l_ends)
 for i in range(n):
 	l_responses.append(l_waits[i]+l_ends[i]-l_starts[i])
-
 #print(l_responses)
 mean_response_labs = sum(l_responses)/n
 #print(mean_response_labs)
-
 #print(((np.var(n_responses)/n)+(np.var(responses)/n))**0.5)
 vvl = int((((np.var(l_responses)/n)+(np.var(responses)/n))**2)/(((np.var(l_responses)/n)**2)/(n-1))+(((np.var(responses)/n)**2)/(n-1)))
 #print(vvl)
@@ -243,8 +247,8 @@ else:
 
 
 
+	
 #clerk_out
-
 clerks2 = np.array(expon.rvs(scale = 1.5,  size = n, loc=2))
 clerks2 = list(clerks2.astype(np.int))
 c2_responses = []
@@ -281,6 +285,9 @@ elif(uplowc2[0]>0 and uplowc2[0]>0):
 else:
 	f.write("Statistically significant, and Alternative is worse for average time than base case, but other factors should be considered\n\n")
 
+	
+	
+#closing times
 if(ends[-1]<540):
 	close_c = "6 : 00 pm"
 else:
